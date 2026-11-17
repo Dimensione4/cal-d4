@@ -12,9 +12,9 @@ const RedirectPage = async () => {
   if (!session?.user?.id) {
     // D4: i visitori non loggati atterrano direttamente sul calendario di prenotazione.
     // Variabile runtime server-only: si cambia da Coolify senza rebuild.
-    // Solo path relativi ("/x"), mai "//dominio": niente open redirect.
+    // Solo path relativi ("/x"), mai "//dominio" né "/\dominio" (i browser leggono "\" come "/"): niente open redirect.
     const publicRoot = process.env.D4_PUBLIC_ROOT_PATH;
-    redirect(publicRoot && /^\/[^/]/.test(publicRoot) ? publicRoot : "/auth/login");
+    redirect(publicRoot && /^\/[^/\\]/.test(publicRoot) ? publicRoot : "/auth/login");
   }
 
   // Check if user needs onboarding and redirect before going to event-types

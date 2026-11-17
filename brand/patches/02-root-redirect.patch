@@ -8,9 +8,9 @@ diff --git a/apps/web/app/page.tsx b/apps/web/app/page.tsx
 -    redirect("/auth/login");
 +    // D4: i visitori non loggati atterrano direttamente sul calendario di prenotazione.
 +    // Variabile runtime server-only: si cambia da Coolify senza rebuild.
-+    // Solo path relativi ("/x"), mai "//dominio": niente open redirect.
++    // Solo path relativi ("/x"), mai "//dominio" né "/\dominio" (i browser leggono "\" come "/"): niente open redirect.
 +    const publicRoot = process.env.D4_PUBLIC_ROOT_PATH;
-+    redirect(publicRoot && /^\/[^/]/.test(publicRoot) ? publicRoot : "/auth/login");
++    redirect(publicRoot && /^\/[^/\\]/.test(publicRoot) ? publicRoot : "/auth/login");
    }
  
    // Check if user needs onboarding and redirect before going to event-types
