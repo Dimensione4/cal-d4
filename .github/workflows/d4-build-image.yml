@@ -1,0 +1,80 @@
+# D4 · Costruisce l'immagine Cal.diy brandizzata e la pubblica su GHCR.
+# Nessun segreto applicativo qui: DB, chiavi e SMTP stanno solo su Coolify.
+name: D4 Build Image
+
+on:
+  push:
+    branches: [d4/main]
+    paths-ignore: ["**.md"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: d4-build-image
+  cancel-in-progress: true
+
+env:
+  # Valori pubblici, finiscono comunque nel bundle del browser
+  APP_NAME: "Dimensione 4"
+  COMPANY_NAME: "Dimensione 4 di Dario Marco Bellini"
+  SUPPORT_MAIL: "dariomarcobellini@dimensione4.it"
+  WEBAPP_URL: "https://cal.dimensione4.it"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    # Il build di Next.js si collega al DB (vuoto va bene), come nella CI ufficiale
+    services:
+      database:
+        image: postgres:16
+        env:
+          POSTGRES_USER: build
+          POSTGRES_PASSWORD: build
+          POSTGRES_DB: build
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U build"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Libera spazio disco sul runner
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Login GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build e push
+        run: |
+          set -euo pipefail
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          IMAGE="ghcr.io/${OWNER}/cal-d4"
+          TAG="$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
+          DB_URL="postgresql://build:build@localhost:5432/build"
+
+          DOCKER_BUILDKIT=1 docker build --network host \
+            --build-arg NEXT_PUBLIC_APP_NAME="$APP_NAME" \
+            --build-arg NEXT_PUBLIC_COMPANY_NAME="$COMPANY_NAME" \
+            --build-arg NEXT_PUBLIC_SUPPORT_MAIL_ADDRESS="$SUPPORT_MAIL" \
+            --build-arg NEXT_PUBLIC_WEBAPP_URL="$WEBAPP_URL" \
+            --build-arg NEXT_PUBLIC_LICENSE_CONSENT=agree \
+            --build-arg CALCOM_TELEMETRY_DISABLED=1 \
+            --build-arg DATABASE_URL="$DB_URL" \
+            --label org.opencontainers.image.source="https://github.com/${GITHUB_REPOSITORY}" \
+            -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+
+          docker push "$IMAGE:$TAG"
+          docker push "$IMAGE:latest"
+          echo "### Immagine pubblicata" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`$IMAGE:$TAG\` (anche \`latest\`)" >> "$GITHUB_STEP_SUMMARY"

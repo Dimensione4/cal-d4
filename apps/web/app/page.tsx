@@ -10,7 +10,11 @@ const RedirectPage = async () => {
   const session = await getServerSession({ req: buildLegacyRequest(await headers(), await cookies()) });
 
   if (!session?.user?.id) {
-    redirect("/auth/login");
+    // D4: i visitori non loggati atterrano direttamente sul calendario di prenotazione.
+    // Variabile runtime server-only: si cambia da Coolify senza rebuild.
+    // Solo path relativi ("/x"), mai "//dominio": niente open redirect.
+    const publicRoot = process.env.D4_PUBLIC_ROOT_PATH;
+    redirect(publicRoot && /^\/[^/]/.test(publicRoot) ? publicRoot : "/auth/login");
   }
 
   // Check if user needs onboarding and redirect before going to event-types
