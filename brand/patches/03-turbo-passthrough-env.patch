@@ -1,0 +1,12 @@
+diff --git a/turbo.json b/turbo.json
+index 8b40d67e20..41812087f4 100644
+--- a/turbo.json
++++ b/turbo.json
+@@ -39,6 +39,7 @@
+     "CRON_SECRET",
+     "CRON_ENABLE_APP_SYNC",
+     "CLOUDFLARE_TURNSTILE_SECRET",
++    "D4_PUBLIC_ROOT_PATH",
+     "DAILY_API_KEY",
+     "DAILY_SCALE_PLAN",
+     "DAILY_WEBHOOK_SECRET",
