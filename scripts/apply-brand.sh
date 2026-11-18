@@ -28,6 +28,9 @@ done
 # Logo nelle email transazionali
 cp "$SRC/email-logo.png" "$PUB/emails/logo.png"
 
+# Tema D4 (vetro, token del sito): lo importa apps/web/styles/globals.css (patch 07)
+cp "$ROOT/brand/css/d4-theme.css" "$ROOT/apps/web/styles/d4-theme.css"
+
 # Manifest PWA
 node -e '
 const fs = require("fs");

@@ -13,14 +13,15 @@ export function Logo({
   className?: string;
   src?: string;
 }) {
+  // D4: niente dark:invert, il logo D4 è a colori e funziona su chiaro e scuro (l'inversione lo rovina).
   return (
     <h3 className={classNames("logo", inline && "inline", className)}>
       <strong>
         {icon ? (
-          <img className="mx-auto w-9 dark:invert" alt="Cal.diy" title="Cal.diy" src={`${src}?type=icon`} />
+          <img className="mx-auto w-9" alt="Cal.diy" title="Cal.diy" src={`${src}?type=icon`} />
         ) : (
           <img
-            className={classNames(small ? "h-4 w-auto" : "h-5 w-auto", "dark:invert")}
+            className={small ? "h-4 w-auto" : "h-5 w-auto"}
             alt="Cal.diy"
             title="Cal.diy"
             src={src}

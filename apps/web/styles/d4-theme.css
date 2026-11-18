@@ -1,0 +1,377 @@
+/*
+ * D4 · Tema Dimensione 4 per Cal.diy: "Ethereal Glass" sulle pagine pubbliche di prenotazione.
+ * File NOSTRO, fuori dal core: scripts/apply-brand.sh lo copia in apps/web/styles/d4-theme.css
+ * e una patch di 1 riga lo importa in globals.css insieme agli altri @import, NON in un @layer:
+ * gli stili senza layer battono le utility Tailwind (che stanno in @layer utilities).
+ *
+ * Token = quelli reali di dimensione4.it (:root scuro, .light chiaro), letti dal sito il 2026-11-18.
+ * Il colore brand scelto nell'app (Impostazioni > Aspetto) viene scritto in inline su <html> da
+ * useCalcomTheme e vince su questo file: va impostato lo stesso teal anche li' (#0f9997 / #12a5a3).
+ * Font: --font-sans / --font-cal / --font-heading arrivano da next/font in layout.tsx (patch 04).
+ * Solo transform/opacity animati. Movimento e trasparenza ridotti rispettati in fondo al file.
+ */
+
+/* ───────────── Token · chiaro (.light del sito) ───────────── */
+:root,
+:host {
+  --radius: 0.75rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+
+  --cal-bg: hsl(210 18% 98%);
+  --cal-bg-subtle: hsl(210 24% 96%);
+  --cal-bg-muted: hsl(210 16% 94%);
+  --cal-bg-emphasis: hsl(210 14% 91%);
+  --cal-border: hsl(210 16% 84%);
+  --cal-border-subtle: hsl(210 16% 90%);
+  --cal-border-muted: hsl(210 16% 92%);
+  --cal-border-emphasis: hsl(215 15% 66%);
+  --cal-text-emphasis: hsl(215 46% 12%);
+  --cal-text: hsl(215 34% 22%);
+  --cal-text-subtle: hsl(215 15% 36%);
+  --cal-text-muted: hsl(215 12% 52%);
+
+  /* default del brand: stesso teal impostato nell'app, cosi' non c'e' flash prima dell'inline */
+  --cal-brand: hsl(179 82% 33%);
+  --cal-brand-emphasis: hsl(179 82% 28%);
+  --cal-brand-text: hsl(210 18% 98%);
+
+  --d4-accent: hsl(179 82% 33%);
+  --d4-accent-glow: hsl(180 78% 42%);
+  --d4-grad: linear-gradient(135deg, #0a7c7d, #12a9a9);
+  --d4-on-grad: hsl(210 18% 98%);
+  --d4-bevel: inset 0 1px 0 hsl(0 0% 100% / 0.4), inset 0 -2px 0 hsl(190 80% 18% / 0.3);
+  --d4-hover-glow: 0 0 0 1px hsl(179 82% 33% / 0.55), 0 8px 24px -6px hsl(179 82% 33% / 0.4);
+
+  /* vetro */
+  --d4-glass: hsl(0 0% 100% / 0.58);
+  --d4-solid: hsl(210 18% 98%);
+  --d4-sheen: linear-gradient(135deg, hsl(0 0% 100% / 0.7), transparent 42%);
+  --d4-rim: inset 0 1px 0 hsl(0 0% 100% / 0.95), inset 0 0 0 1px hsl(0 0% 100% / 0.55);
+  --d4-tray: 0 0 0 6px hsl(0 0% 100% / 0.42), 0 0 0 7px hsl(215 46% 12% / 0.07);
+  --d4-drop: 0 44px 90px -34px hsl(215 46% 12% / 0.3), 0 18px 40px -22px hsl(179 82% 33% / 0.28);
+  --d4-tile: hsl(0 0% 100% / 0.5);
+  --d4-tile-border: hsl(215 46% 12% / 0.08);
+  --d4-tile-shadow: 0 1px 2px hsl(215 46% 12% / 0.06), inset 0 1px 0 hsl(0 0% 100% / 0.8);
+  --d4-field: hsl(0 0% 100% / 0.6);
+  --d4-dots: radial-gradient(circle at 1px 1px, hsl(215 46% 12% / 0.05) 1px, transparent 0);
+  /* il layer e' 150% del viewport (inset:-25%): le % sono relative al layer, non allo schermo */
+  --d4-orbs:
+    radial-gradient(40% 46% at 38% 42%, hsl(179 80% 40% / 0.28), transparent 68%),
+    radial-gradient(36% 42% at 67% 61%, hsl(180 78% 52% / 0.24), transparent 68%),
+    radial-gradient(26% 30% at 58% 21%, hsl(35 85% 69% / 0.16), transparent 70%);
+}
+
+/* ───────────── Token · scuro (:root del sito) ───────────── */
+.dark {
+  --cal-bg: hsl(216 45% 3%);           /* sfondo pagina #05070a */
+  --cal-bg-subtle: hsl(210 25% 10%);
+  --cal-bg-muted: hsl(210 30% 7%);     /* superficie #0c1217 */
+  --cal-bg-emphasis: hsl(210 22% 16%);
+  --cal-border: hsl(200 30% 94% / 0.14);
+  --cal-border-subtle: hsl(200 30% 94% / 0.08);
+  --cal-border-muted: hsl(200 30% 94% / 0.05);
+  --cal-border-emphasis: hsl(200 30% 94% / 0.3);
+  --cal-text-emphasis: hsl(200 30% 94%);   /* #ebf1f4 */
+  --cal-text: hsl(200 22% 84%);
+  --cal-text-subtle: hsl(205 18% 71%);     /* #a8b7c2 */
+  --cal-text-muted: hsl(205 12% 52%);
+
+  --cal-brand: hsl(179 80% 36%);           /* #12a5a3 */
+  --cal-brand-emphasis: hsl(180 78% 52%);  /* #25e4e4 */
+  --cal-brand-text: hsl(190 66% 4%);       /* testo scuro sul teal: 6.4:1 */
+
+  --d4-accent: hsl(180 78% 52%);
+  --d4-accent-glow: hsl(180 78% 52%);
+  --d4-grad: linear-gradient(135deg, #12a5a3, #25e4e4);
+  --d4-on-grad: #031012;
+  --d4-bevel: inset 0 1px 0 hsl(0 0% 100% / 0.45), inset 0 -2px 0 hsl(190 80% 18% / 0.35);
+  --d4-hover-glow: 0 0 0 1px #25e4e480, 0 8px 28px -6px #25e4e466;
+
+  --d4-glass: hsl(210 30% 9% / 0.5);
+  --d4-solid: hsl(210 30% 7%);
+  --d4-sheen: linear-gradient(135deg, hsl(0 0% 100% / 0.07), transparent 38%);
+  --d4-rim: inset 0 1px 0 hsl(0 0% 100% / 0.1), inset 0 0 0 1px hsl(200 30% 94% / 0.08);
+  --d4-tray: 0 0 0 6px hsl(200 30% 94% / 0.03), 0 0 0 7px hsl(200 30% 94% / 0.075);
+  --d4-drop: 0 50px 100px -40px #000d, 0 0 90px -30px hsl(180 78% 52% / 0.22);
+  --d4-tile: hsl(200 30% 94% / 0.035);
+  --d4-tile-border: hsl(200 30% 94% / 0.09);
+  --d4-tile-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.05);
+  --d4-field: hsl(216 45% 3% / 0.45);
+  --d4-dots: radial-gradient(circle at 1px 1px, hsl(200 30% 94% / 0.045) 1px, transparent 0);
+  --d4-orbs:
+    radial-gradient(40% 46% at 38% 42%, hsl(179 80% 36% / 0.46), transparent 68%),
+    radial-gradient(36% 42% at 67% 61%, hsl(180 78% 52% / 0.26), transparent 68%),
+    radial-gradient(26% 30% at 58% 21%, hsl(35 85% 69% / 0.1), transparent 70%);
+}
+
+/* ───────────── Pagina: fondo + orbs che derivano lentamente (dietro il vetro) ───────────── */
+body[class] {
+  background: var(--d4-dots) 0 0 / 32px 32px, var(--cal-bg-subtle);
+  background-attachment: fixed;
+}
+.dark body[class] {
+  background: var(--d4-dots) 0 0 / 32px 32px, var(--cal-bg);
+  background-attachment: fixed;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--d4-orbs);
+  will-change: transform;
+  animation: d4-drift 32s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+@keyframes d4-drift {
+  from { transform: translate3d(-3%, -2%, 0) scale(1); }
+  to   { transform: translate3d(3%, 3%, 0) scale(1.08); }
+}
+
+/* ───────────── Booker: card di vetro nel suo vassoio (doppio bordo) ───────────── */
+@property --d4-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+/*
+ * ATTENZIONE: sul contenitore NON vanno mai backdrop-filter, filter, transform, perspective o will-change:
+ * trasformerebbero il contenitore nel riferimento degli elementi position:fixed al suo interno
+ * (la barra "Sovrapponi il mio calendario" e i pulsanti di vista finirebbero dentro la card).
+ * Il vetro sta quindi sul pseudo-elemento ::after, dietro ai contenuti.
+ */
+[data-testid="booker-container"] {
+  position: relative;
+  isolation: isolate;
+  /* le fasce interne che usano bg-default diventano trasparenti: si vede il vetro, non una toppa */
+  --cal-bg: transparent;
+  --cal-bg-muted: transparent;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: var(--d4-tray), var(--d4-drop);
+  /* solo opacity: un transform qui sposterebbe la barra fissa */
+  animation: d4-fade 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@keyframes d4-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+/* la lastra di vetro: blur dello sfondo, riflesso diagonale e bordo interno chiaro */
+[data-testid="booker-container"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: var(--d4-glass);
+  background-image: var(--d4-sheen);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  backdrop-filter: blur(26px) saturate(160%);
+  box-shadow: var(--d4-rim);
+  /* ingresso 3D: la lastra sale dalla profondita' (backwards = nessun transform a fine animazione) */
+  animation: d4-rise 1.1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transform-origin: 50% 100%;
+}
+@keyframes d4-rise {
+  from { transform: perspective(1400px) translate3d(0, 26px, -70px) rotateX(7deg); }
+  to   { transform: perspective(1400px) translate3d(0, 0, 0) rotateX(0); }
+}
+/* bordo luminoso che gira, come l'anello del pulsante secondario del sito */
+[data-testid="booker-container"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--d4-angle), transparent 0deg 240deg, var(--d4-accent) 330deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0.85;
+  animation: d4-spin 10s linear infinite;
+}
+@keyframes d4-spin {
+  to { --d4-angle: 360deg; }
+}
+
+/* icone a tratto fine (il sito usa icone line sottili) */
+[data-testid="booker-container"] svg.lucide {
+  stroke-width: 1.5;
+}
+
+/* colonna sinistra: nome host come eyebrow, titolo serif editoriale */
+[data-testid="event-meta"] ul + p {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--d4-accent);
+}
+[data-testid="event-title"] {
+  font-family: var(--font-cal, var(--font-heading, serif));
+  font-size: 1.85rem;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+  color: var(--cal-text-emphasis);
+}
+[data-testid="avatar"] {
+  box-shadow: 0 0 0 2px var(--d4-tile-border), 0 0 20px hsl(180 78% 52% / 0.25);
+}
+[data-testid="selected-month-label"] strong,
+[data-testid="selected-month-label"] span {
+  font-family: var(--font-cal, var(--font-heading, serif));
+  letter-spacing: -0.015em;
+}
+[data-testid="selected-month-label"] strong { font-weight: 600; font-size: 1.2rem; }
+[data-testid="selected-month-label"] span { font-weight: 500; }
+
+/* ───────────── Calendario: tessere in rilievo ───────────── */
+[data-testid="day"] {
+  border-width: 1px;
+  border-radius: 0.75rem;
+  transition: border-color 0.5s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+    transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-testid="day"]:not([data-disabled="true"]):not([class~="bg-brand-default"]) {
+  background: var(--d4-tile);
+  border-color: var(--d4-tile-border);
+  box-shadow: var(--d4-tile-shadow);
+  color: var(--cal-text-emphasis);
+}
+[data-testid="day"]:not([data-disabled="true"]):not([class~="bg-brand-default"]):hover {
+  border-color: var(--d4-accent);
+  box-shadow: var(--d4-hover-glow);
+  transform: translateY(-2px) scale(1.04);
+}
+[data-testid="day"][data-disabled="true"] {
+  background: transparent;
+  color: var(--cal-text-muted);
+  opacity: 0.65;
+}
+/* giorno selezionato: tasto sporgente con smusso, gradiente del sito e alone */
+[data-testid="day"][class~="bg-brand-default"] {
+  font-weight: 700;
+  border-color: transparent;
+  box-shadow: var(--d4-bevel), var(--d4-hover-glow);
+  transform: translateY(-1px);
+}
+
+/* ───────────── Orari: pastiglie di vetro ───────────── */
+[data-testid="time"] {
+  border-radius: 0.875rem;
+  border: 1px solid var(--d4-tile-border);
+  background: var(--d4-tile);
+  box-shadow: var(--d4-tile-shadow);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  transition: border-color 0.5s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+    transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+/* hover con anello e alone INTERNI: la colonna ha overflow:hidden e un glow esterno verrebbe tagliato */
+[data-testid="time"]:not(:disabled):hover {
+  background: var(--d4-tile);
+  border-color: var(--d4-accent);
+  box-shadow: inset 0 0 0 1px var(--d4-accent), inset 0 0 26px hsl(180 78% 52% / 0.14);
+  color: var(--cal-text-emphasis);
+}
+
+/* ───────────── Modulo: campi di vetro con anello teal in focus ───────────── */
+[data-testid="booker-container"] :is(input, textarea, select):not([type="checkbox"]):not([type="radio"]) {
+  background-color: var(--d4-field);
+  border-color: var(--cal-border);
+  border-radius: 0.75rem;
+  transition: border-color 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-testid="booker-container"] :is(input, textarea, select):focus-visible,
+[data-testid="booker-container"] :is(input, textarea, select):focus {
+  border-color: var(--d4-accent);
+  box-shadow: 0 0 0 3px hsl(180 78% 52% / 0.22);
+  outline: none;
+}
+
+/* ───────────── Azione primaria: pillola a gradiente con riflesso ───────────── */
+[class~="bg-brand-default"] {
+  background-image: var(--d4-grad);
+  color: var(--d4-on-grad);
+}
+[data-testid="booker-container"] button[class~="bg-brand-default"]:not([data-testid="day"]) {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  box-shadow: var(--d4-bevel);
+  transition: box-shadow 0.5s cubic-bezier(0.32, 0.72, 0, 1), transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-testid="booker-container"] button[class~="bg-brand-default"]:not([data-testid="day"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 36%, hsl(0 0% 100% / 0.4) 50%, transparent 64%);
+  transform: translateX(-130%);
+  animation: d4-sheen 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes d4-sheen {
+  0%, 55% { transform: translateX(-130%); }
+  100%    { transform: translateX(130%); }
+}
+[data-testid="booker-container"] button[class~="bg-brand-default"]:not([data-testid="day"]):hover {
+  box-shadow: var(--d4-bevel), 0 10px 30px -8px hsl(180 78% 52% / 0.55);
+  transform: translateY(-1px);
+}
+[data-testid="booker-container"] button[class~="bg-brand-default"]:not([data-testid="day"]):active {
+  transform: scale(0.98);
+}
+
+/* ───────────── Mobile: niente vassoio, blur leggero, niente anello ───────────── */
+@media (max-width: 767px) {
+  [data-testid="booker-container"] {
+    border-radius: 1.25rem;
+    box-shadow: none;
+  }
+  [data-testid="booker-container"]::after {
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    backdrop-filter: blur(14px) saturate(150%);
+    animation: none;
+  }
+  [data-testid="booker-container"]::before { display: none; }
+  body::before { animation: none; }
+  [data-testid="event-title"] { font-size: 1.6rem; }
+}
+
+/* ───────────── Accessibilita' ───────────── */
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  [data-testid="booker-container"],
+  [data-testid="booker-container"]::before,
+  [data-testid="booker-container"]::after,
+  [data-testid="booker-container"] button[class~="bg-brand-default"]::after {
+    animation: none;
+  }
+  [data-testid="day"],
+  [data-testid="time"] {
+    transition: none;
+    transform: none !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  [data-testid="booker-container"]::after {
+    background-color: var(--d4-solid);
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [data-testid="booker-container"]::after {
+    background-color: var(--d4-solid);
+    background-image: none;
+  }
+}

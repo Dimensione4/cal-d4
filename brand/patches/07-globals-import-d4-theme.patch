@@ -1,0 +1,13 @@
+diff --git a/apps/web/styles/globals.css b/apps/web/styles/globals.css
+index 3be5aef715..e23d9c015b 100644
+--- a/apps/web/styles/globals.css
++++ b/apps/web/styles/globals.css
+@@ -3,6 +3,8 @@
+ @import "../../../packages/config/theme/tokens.css";
+ @import "../../../packages/coss-ui/src/styles/globals.css";
+ @import "./raqb.css";
++/* D4: tema Dimensione 4 (brand/css/d4-theme.css, copiato da scripts/apply-brand.sh) */
++@import "./d4-theme.css";
+ 
+ ::-moz-selection {
+   color: var(--cal-brand-text);

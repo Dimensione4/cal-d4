@@ -22,6 +22,8 @@ env:
   COMPANY_NAME: "Dimensione 4 di Dario Marco Bellini"
   SUPPORT_MAIL: "dariomarcobellini@dimensione4.it"
   WEBAPP_URL: "https://cal.dimensione4.it"
+  TERMS_URL: "https://www.dimensione4.it/termini-condizioni"
+  PRIVACY_URL: "https://www.dimensione4.it/privacy-policy"
 
 jobs:
   build:
@@ -68,6 +70,9 @@ jobs:
             --build-arg NEXT_PUBLIC_COMPANY_NAME="$COMPANY_NAME" \
             --build-arg NEXT_PUBLIC_SUPPORT_MAIL_ADDRESS="$SUPPORT_MAIL" \
             --build-arg NEXT_PUBLIC_WEBAPP_URL="$WEBAPP_URL" \
+            --build-arg NEXT_PUBLIC_WEBSITE_TERMS_URL="$TERMS_URL" \
+            --build-arg NEXT_PUBLIC_WEBSITE_PRIVACY_POLICY_URL="$PRIVACY_URL" \
+            --build-arg NEXT_PUBLIC_DISABLE_SIGNUP=true \
             --build-arg NEXT_PUBLIC_LICENSE_CONSENT=agree \
             --build-arg CALCOM_TELEMETRY_DISABLED=1 \
             --build-arg DATABASE_URL="$DB_URL" \
