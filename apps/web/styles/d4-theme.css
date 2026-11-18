@@ -34,12 +34,15 @@
   /* default del brand: stesso teal impostato nell'app, cosi' non c'e' flash prima dell'inline */
   --cal-brand: hsl(179 82% 33%);
   --cal-brand-emphasis: hsl(179 82% 28%);
-  --cal-brand-text: hsl(210 18% 98%);
+  --cal-brand-text: hsl(190 66% 4%);       /* testo scuro sul teal: 5.5:1 (il bianco darebbe 3.3:1) */
 
   --d4-accent: hsl(179 82% 33%);
   --d4-accent-glow: hsl(180 78% 42%);
-  --d4-grad: linear-gradient(135deg, #0a7c7d, #12a9a9);
-  --d4-on-grad: hsl(210 18% 98%);
+  --d4-eyebrow: hsl(179 82% 24%);          /* 5.6:1 sulla card chiara (il teal pieno darebbe 3.3:1) */
+  /* gradiente chiaro: piu' luminoso di quello del sito (#0a7c7d→#12a9a9) perche' il bianco sul suo
+     estremo chiaro fa 2.76:1; con testo scuro #031012 reggono 5.5:1 e 6.7:1 (AA) */
+  --d4-grad: linear-gradient(135deg, #0f9997, #12a9a9);
+  --d4-on-grad: #031012;
   --d4-bevel: inset 0 1px 0 hsl(0 0% 100% / 0.4), inset 0 -2px 0 hsl(190 80% 18% / 0.3);
   --d4-hover-glow: 0 0 0 1px hsl(179 82% 33% / 0.55), 0 8px 24px -6px hsl(179 82% 33% / 0.4);
 
@@ -54,6 +57,7 @@
   --d4-tile-border: hsl(215 46% 12% / 0.08);
   --d4-tile-shadow: 0 1px 2px hsl(215 46% 12% / 0.06), inset 0 1px 0 hsl(0 0% 100% / 0.8);
   --d4-field: hsl(0 0% 100% / 0.6);
+  --d4-menu: hsl(0 0% 100% / 0.97);
   --d4-dots: radial-gradient(circle at 1px 1px, hsl(215 46% 12% / 0.05) 1px, transparent 0);
   /* il layer e' 150% del viewport (inset:-25%): le % sono relative al layer, non allo schermo */
   --d4-orbs:
@@ -83,6 +87,7 @@
 
   --d4-accent: hsl(180 78% 52%);
   --d4-accent-glow: hsl(180 78% 52%);
+  --d4-eyebrow: hsl(180 78% 52%);
   --d4-grad: linear-gradient(135deg, #12a5a3, #25e4e4);
   --d4-on-grad: #031012;
   --d4-bevel: inset 0 1px 0 hsl(0 0% 100% / 0.45), inset 0 -2px 0 hsl(190 80% 18% / 0.35);
@@ -98,6 +103,7 @@
   --d4-tile-border: hsl(200 30% 94% / 0.09);
   --d4-tile-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.05);
   --d4-field: hsl(216 45% 3% / 0.45);
+  --d4-menu: hsl(210 30% 9% / 0.97);
   --d4-dots: radial-gradient(circle at 1px 1px, hsl(200 30% 94% / 0.045) 1px, transparent 0);
   --d4-orbs:
     radial-gradient(40% 46% at 38% 42%, hsl(179 80% 36% / 0.46), transparent 68%),
@@ -123,6 +129,10 @@ body::before {
   background: var(--d4-orbs);
   will-change: transform;
   animation: d4-drift 32s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+/* embed con sfondo trasparente richiesto dalla pagina ospite (stile inline sul body): niente orbs */
+body[style*="transparent"]::before {
+  display: none;
 }
 @keyframes d4-drift {
   from { transform: translate3d(-3%, -2%, 0) scale(1); }
@@ -194,7 +204,13 @@ body::before {
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
   opacity: 0.85;
+  /* l'animazione di una proprieta' custom ricalcola lo stile a ogni frame (misurato: ~6% di un core
+     a riposo): gira solo con mouse sopra o focus dentro la card, altrimenti resta ferma */
   animation: d4-spin 10s linear infinite;
+  animation-play-state: paused;
+}
+[data-testid="booker-container"]:is(:hover, :focus-within)::before {
+  animation-play-state: running;
 }
 @keyframes d4-spin {
   to { --d4-angle: 360deg; }
@@ -211,7 +227,7 @@ body::before {
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--d4-accent);
+  color: var(--d4-eyebrow);
 }
 [data-testid="event-title"] {
   font-family: var(--font-cal, var(--font-heading, serif));
@@ -297,8 +313,17 @@ body::before {
   outline: none;
 }
 
+/* tendine (fuso orario, prefisso telefono...): stanno DENTRO la card, dove i token bg sono trasparenti;
+   senza un fondo pieno si leggerebbero le tessere del calendario sotto il menu */
+[data-testid="booker-container"] .shadow-dropdown {
+  background-color: var(--d4-menu);
+  border-color: var(--cal-border);
+  border-radius: 0.875rem;
+}
+
 /* ───────────── Azione primaria: pillola a gradiente con riflesso ───────────── */
-[class~="bg-brand-default"] {
+/* solo dentro il Booker: fuori (area admin, switch, ecc.) il colore brand resta quello di Cal */
+[data-testid="booker-container"] [class~="bg-brand-default"] {
   background-image: var(--d4-grad);
   color: var(--d4-on-grad);
 }
