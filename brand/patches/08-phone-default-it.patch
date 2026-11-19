@@ -1,0 +1,31 @@
+diff --git a/apps/web/components/phone-input/PhoneInput.tsx b/apps/web/components/phone-input/PhoneInput.tsx
+index 36949c4ec0..7a28d0dc0a 100644
+--- a/apps/web/components/phone-input/PhoneInput.tsx
++++ b/apps/web/components/phone-input/PhoneInput.tsx
+@@ -31,7 +31,7 @@ function BasePhoneInput({
+   className = "",
+   onChange,
+   value,
+-  defaultCountry = "us",
++  defaultCountry = "it",
+   ...rest
+ }: PhoneInputProps) {
+   const isPlatform = useIsPlatform();
+@@ -160,7 +160,7 @@ function BasePhoneInputWeb({
+ 
+ const useDefaultCountry = () => {
+   const defaultPhoneCountryFromStore = useBookerStore((state) => state.defaultPhoneCountry);
+-  const [defaultCountry, setDefaultCountry] = useState<CountryCode>(defaultPhoneCountryFromStore || "us");
++  const [defaultCountry, setDefaultCountry] = useState<CountryCode>(defaultPhoneCountryFromStore || "it");
+   const query = trpc.viewer.public.countryCode.useQuery(undefined, {
+     refetchOnWindowFocus: false,
+     refetchOnReconnect: false,
+@@ -186,7 +186,7 @@ const useDefaultCountry = () => {
+         if (navCountry && isSupportedCountry(navCountry)) {
+           setDefaultCountry(navCountry.toLowerCase() as CountryCode);
+         } else {
+-          setDefaultCountry("us");
++          setDefaultCountry("it");
+         }
+       }
+     },
