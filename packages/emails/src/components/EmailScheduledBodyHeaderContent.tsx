@@ -21,12 +21,12 @@ const EmailScheduledBodyHeaderContent = (props: {
         <div
           data-testid="heading"
           style={{
-            fontFamily: "Roboto, Helvetica, sans-serif",
-            fontSize: 24,
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: 28,
             fontWeight: 700,
-            lineHeight: "24px",
+            lineHeight: "34px",
             textAlign: "center",
-            color: "#111827",
+            color: "#0B1A22",
           }}>
           {props.title}
         </div>
@@ -39,11 +39,11 @@ const EmailScheduledBodyHeaderContent = (props: {
             data-testid="subHeading"
             style={{
               fontFamily: "Roboto, Helvetica, sans-serif",
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: 400,
-              lineHeight: "24px",
+              lineHeight: "23px",
               textAlign: "center",
-              color: "#4B5563",
+              color: "#4B5B66",
             }}>
             {props.subtitle}
           </div>

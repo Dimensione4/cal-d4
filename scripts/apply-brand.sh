@@ -27,6 +27,10 @@ done
 
 # Logo nelle email transazionali
 cp "$SRC/email-logo.png" "$PUB/emails/logo.png"
+# Icone email in ciano (nomi nuovi: Gmail tiene in cache le immagini per URL)
+cp "$SRC/email-check@2x.png" "$PUB/emails/d4-checkCircle@2x.png"
+cp "$SRC/email-calendar@2x.png" "$PUB/emails/d4-calendarCircle@2x.png"
+cp "$SRC/email-team@2x.png" "$PUB/emails/d4-teamCircle@2x.png"
 
 # Tema D4 (vetro, token del sito): lo importa apps/web/styles/globals.css (patch 07)
 cp "$ROOT/brand/css/d4-theme.css" "$ROOT/apps/web/styles/d4-theme.css"

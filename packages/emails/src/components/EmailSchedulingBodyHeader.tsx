@@ -9,19 +9,27 @@ export type BodyHeadType = "checkCircle" | "xCircle" | "calendarCircle" | "teamC
 
 export const getHeadImage = (headerType: BodyHeadType): string => {
   switch (headerType) {
+    // D4: icone ciano con nomi nuovi (Gmail tiene in cache le immagini per URL)
     case "checkCircle":
-      return `${BASE_URL}/emails/checkCircle@2x.png`;
+      return `${BASE_URL}/emails/d4-checkCircle@2x.png`;
     case "xCircle":
       return `${BASE_URL}/emails/xCircle@2x.png`;
     case "calendarCircle":
-      return `${BASE_URL}/emails/calendarCircle@2x.png`;
+      return `${BASE_URL}/emails/d4-calendarCircle@2x.png`;
     case "teamCircle":
-      return `${BASE_URL}/emails/teamCircle@2x.png`;
+      return `${BASE_URL}/emails/d4-teamCircle@2x.png`;
   }
 };
 
-const EmailSchedulingBodyHeader = (props: { headerType: BodyHeadType; headStyles?: CSSProperties }) => {
-  const image = getHeadImage(props.headerType);
+const EmailSchedulingBodyHeader = (props: {
+  headerType: BodyHeadType;
+  headStyles?: CSSProperties;
+  avatarUrl?: string;
+}) => {
+  // D4: la foto del titolare sostituisce l'icona, tranne nelle email di annullamento
+  const avatar = props.headerType !== "xCircle" ? props.avatarUrl : undefined;
+  const image = avatar || getHeadImage(props.headerType);
+  const size = avatar ? 88 : 64;
 
   return (
     <>
@@ -35,20 +43,21 @@ const EmailSchedulingBodyHeader = (props: { headerType: BodyHeadType; headStyles
             wordBreak: "break-word",
           }}>
           <Row border="0" role="presentation" style={{ borderCollapse: "collapse", borderSpacing: "0px" }}>
-            <td style={{ width: 64 }}>
+            <td style={{ width: size }}>
               <img
-                height="64"
+                height={size}
                 src={image}
                 style={{
-                  border: "0",
+                  border: avatar ? "3px solid #25E4E4" : "0",
+                  borderRadius: avatar ? "50%" : undefined,
                   display: "block",
                   outline: "none",
                   textDecoration: "none",
-                  height: "64px",
-                  width: "100%",
+                  height: `${size}px`,
+                  width: `${size}px`,
                   fontSize: "13px",
                 }}
-                width="64"
+                width={size}
                 alt=""
               />
             </td>

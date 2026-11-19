@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-head-element */
+import { WEBAPP_URL } from "@calcom/lib/constants";
+
 import BaseTable from "./BaseTable";
 import EmailBodyLogo from "./EmailBodyLogo";
 import EmailHead from "./EmailHead";
@@ -16,6 +18,56 @@ const Html = (props: { children: React.ReactNode }) => (
   </>
 );
 
+// D4: foto del titolare nelle email (URL https pubblico, env runtime D4_EMAIL_AVATAR_URL)
+const d4AvatarUrl = () => {
+  const url = process.env.D4_EMAIL_AVATAR_URL;
+  return url && /^https:\/\//.test(url) ? url : undefined;
+};
+
+// D4: fascia scura con il logo + filetto ciano (solo stili inline, compatibile con i client email)
+const D4Band = () => (
+  <>
+    <table
+      role="presentation"
+      width="100%"
+      cellPadding={0}
+      cellSpacing={0}
+      style={{ background: "#05070A", backgroundColor: "#05070A" }}>
+      <tbody>
+        <tr>
+          <td align="center" style={{ padding: "28px 25px 24px 25px" }}>
+            <img
+              src={`${WEBAPP_URL}/emails/logo.png`}
+              width="176"
+              height="44"
+              alt="Dimensione 4"
+              style={{ display: "block", width: 176, height: 44, border: 0 }}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table
+      role="presentation"
+      width="100%"
+      cellPadding={0}
+      cellSpacing={0}
+      style={{
+        background: "#12A5A3",
+        backgroundColor: "#12A5A3",
+        backgroundImage: "linear-gradient(90deg,#12A5A3,#25E4E4)",
+      }}>
+      <tbody>
+        <tr>
+          <td height="3" style={{ height: 3, lineHeight: "3px", fontSize: 3 }}>
+            &nbsp;
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </>
+);
+
 export const BaseEmailHtml = (props: {
   children: React.ReactNode;
   callToAction?: React.ReactNode;
@@ -28,8 +80,8 @@ export const BaseEmailHtml = (props: {
   return (
     <Html>
       <EmailHead title={props.subject} />
-      <body style={{ wordSpacing: "normal", backgroundColor: "#F3F4F6" }}>
-        <div style={{ backgroundColor: "#F3F4F6" }}>
+      <body style={{ wordSpacing: "normal", backgroundColor: "#EEF3F6" }}>
+        <div style={{ backgroundColor: "#EEF3F6" }}>
           <RawHtml
             html={`<!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->`}
           />
@@ -53,13 +105,19 @@ export const BaseEmailHtml = (props: {
             style={{
               margin: "0px auto",
               maxWidth: 600,
-              borderRadius: "8px",
-              border: "1px solid #E5E7EB",
-              padding: "2px",
+              borderRadius: "16px",
+              border: "1px solid #D6E2E8",
+              padding: 0,
+              overflow: "hidden",
               backgroundColor: "#FFFFFF",
             }}>
+            {!props.hideLogo && <D4Band />}
             {props.headerType && (
-              <EmailSchedulingBodyHeader headerType={props.headerType} headStyles={{ border: 0 }} />
+              <EmailSchedulingBodyHeader
+                headerType={props.headerType}
+                headStyles={{ border: 0 }}
+                avatarUrl={d4AvatarUrl()}
+              />
             )}
             {props.title && (
               <EmailScheduledBodyHeaderContent

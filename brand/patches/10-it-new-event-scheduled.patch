@@ -1,0 +1,13 @@
+diff --git a/packages/i18n/locales/it/common.json b/packages/i18n/locales/it/common.json
+index ded2628853..e03c815b72 100644
+--- a/packages/i18n/locales/it/common.json
++++ b/packages/i18n/locales/it/common.json
+@@ -221,7 +221,7 @@
+   "notes": "Osservazioni",
+   "manage_my_bookings": "Gestisci le mie prenotazioni",
+   "need_to_make_a_change": "Hai bisogno di fare una modifica?",
+-  "new_event_scheduled": "Un nuovo evento è stato riprogrammato.",
++  "new_event_scheduled": "Un nuovo evento è stato programmato.",
+   "new_event_scheduled_recurring": "È stato programmato un nuovo evento ricorrente.",
+   "invitee_email": "Email dell'invitato",
+   "invitee_timezone": "Fuso Orario dell' invitato",

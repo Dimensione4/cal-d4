@@ -1,0 +1,390 @@
+diff --git a/packages/emails/src/components/BaseEmailHtml.tsx b/packages/emails/src/components/BaseEmailHtml.tsx
+index 3297dd2231..5c174856e2 100644
+--- a/packages/emails/src/components/BaseEmailHtml.tsx
++++ b/packages/emails/src/components/BaseEmailHtml.tsx
+@@ -1,4 +1,6 @@
+ /* eslint-disable @next/next/no-head-element */
++import { WEBAPP_URL } from "@calcom/lib/constants";
++
+ import BaseTable from "./BaseTable";
+ import EmailBodyLogo from "./EmailBodyLogo";
+ import EmailHead from "./EmailHead";
+@@ -16,6 +18,56 @@ const Html = (props: { children: React.ReactNode }) => (
+   </>
+ );
+ 
++// D4: foto del titolare nelle email (URL https pubblico, env runtime D4_EMAIL_AVATAR_URL)
++const d4AvatarUrl = () => {
++  const url = process.env.D4_EMAIL_AVATAR_URL;
++  return url && /^https:\/\//.test(url) ? url : undefined;
++};
++
++// D4: fascia scura con il logo + filetto ciano (solo stili inline, compatibile con i client email)
++const D4Band = () => (
++  <>
++    <table
++      role="presentation"
++      width="100%"
++      cellPadding={0}
++      cellSpacing={0}
++      style={{ background: "#05070A", backgroundColor: "#05070A" }}>
++      <tbody>
++        <tr>
++          <td align="center" style={{ padding: "28px 25px 24px 25px" }}>
++            <img
++              src={`${WEBAPP_URL}/emails/logo.png`}
++              width="176"
++              height="44"
++              alt="Dimensione 4"
++              style={{ display: "block", width: 176, height: 44, border: 0 }}
++            />
++          </td>
++        </tr>
++      </tbody>
++    </table>
++    <table
++      role="presentation"
++      width="100%"
++      cellPadding={0}
++      cellSpacing={0}
++      style={{
++        background: "#12A5A3",
++        backgroundColor: "#12A5A3",
++        backgroundImage: "linear-gradient(90deg,#12A5A3,#25E4E4)",
++      }}>
++      <tbody>
++        <tr>
++          <td height="3" style={{ height: 3, lineHeight: "3px", fontSize: 3 }}>
++            &nbsp;
++          </td>
++        </tr>
++      </tbody>
++    </table>
++  </>
++);
++
+ export const BaseEmailHtml = (props: {
+   children: React.ReactNode;
+   callToAction?: React.ReactNode;
+@@ -28,8 +80,8 @@ export const BaseEmailHtml = (props: {
+   return (
+     <Html>
+       <EmailHead title={props.subject} />
+-      <body style={{ wordSpacing: "normal", backgroundColor: "#F3F4F6" }}>
+-        <div style={{ backgroundColor: "#F3F4F6" }}>
++      <body style={{ wordSpacing: "normal", backgroundColor: "#EEF3F6" }}>
++        <div style={{ backgroundColor: "#EEF3F6" }}>
+           <RawHtml
+             html={`<!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->`}
+           />
+@@ -53,13 +105,19 @@ export const BaseEmailHtml = (props: {
+             style={{
+               margin: "0px auto",
+               maxWidth: 600,
+-              borderRadius: "8px",
+-              border: "1px solid #E5E7EB",
+-              padding: "2px",
++              borderRadius: "16px",
++              border: "1px solid #D6E2E8",
++              padding: 0,
++              overflow: "hidden",
+               backgroundColor: "#FFFFFF",
+             }}>
++            {!props.hideLogo && <D4Band />}
+             {props.headerType && (
+-              <EmailSchedulingBodyHeader headerType={props.headerType} headStyles={{ border: 0 }} />
++              <EmailSchedulingBodyHeader
++                headerType={props.headerType}
++                headStyles={{ border: 0 }}
++                avatarUrl={d4AvatarUrl()}
++              />
+             )}
+             {props.title && (
+               <EmailScheduledBodyHeaderContent
+diff --git a/packages/emails/src/components/EmailBodyLogo.tsx b/packages/emails/src/components/EmailBodyLogo.tsx
+index 2292b62948..908e7c268d 100644
+--- a/packages/emails/src/components/EmailBodyLogo.tsx
++++ b/packages/emails/src/components/EmailBodyLogo.tsx
+@@ -45,21 +45,21 @@ const EmailBodyLogo = () => {
+                     wordBreak: "break-word",
+                   }}>
+                   <Row border="0" style={{ borderCollapse: "collapse", borderSpacing: "0px" }}>
+-                    <td style={{ width: "89px" }}>
++                    <td style={{ width: "128px" }}>
+                       <a href={WEBAPP_URL} target="_blank" rel="noreferrer">
+                         <img
+-                          height="19"
++                          height="32"
+                           src={image}
+                           style={{
+                             border: "0",
+                             display: "block",
+                             outline: "none",
+                             textDecoration: "none",
+-                            height: "19px",
++                            height: "32px",
+                             width: "100%",
+                             fontSize: "13px",
+                           }}
+-                          width="89"
++                          width="128"
+                           alt=""
+                         />
+                       </a>
+diff --git a/packages/emails/src/components/EmailScheduledBodyHeaderContent.tsx b/packages/emails/src/components/EmailScheduledBodyHeaderContent.tsx
+index b66085a6a0..838ea53ba6 100644
+--- a/packages/emails/src/components/EmailScheduledBodyHeaderContent.tsx
++++ b/packages/emails/src/components/EmailScheduledBodyHeaderContent.tsx
+@@ -21,12 +21,12 @@ const EmailScheduledBodyHeaderContent = (props: {
+         <div
+           data-testid="heading"
+           style={{
+-            fontFamily: "Roboto, Helvetica, sans-serif",
+-            fontSize: 24,
++            fontFamily: "Georgia, 'Times New Roman', serif",
++            fontSize: 28,
+             fontWeight: 700,
+-            lineHeight: "24px",
++            lineHeight: "34px",
+             textAlign: "center",
+-            color: "#111827",
++            color: "#0B1A22",
+           }}>
+           {props.title}
+         </div>
+@@ -39,11 +39,11 @@ const EmailScheduledBodyHeaderContent = (props: {
+             data-testid="subHeading"
+             style={{
+               fontFamily: "Roboto, Helvetica, sans-serif",
+-              fontSize: 16,
++              fontSize: 15,
+               fontWeight: 400,
+-              lineHeight: "24px",
++              lineHeight: "23px",
+               textAlign: "center",
+-              color: "#4B5563",
++              color: "#4B5B66",
+             }}>
+             {props.subtitle}
+           </div>
+diff --git a/packages/emails/src/components/EmailSchedulingBodyDivider.tsx b/packages/emails/src/components/EmailSchedulingBodyDivider.tsx
+index 1e3d181052..23b1843804 100644
+--- a/packages/emails/src/components/EmailSchedulingBodyDivider.tsx
++++ b/packages/emails/src/components/EmailSchedulingBodyDivider.tsx
+@@ -15,14 +15,14 @@ export const EmailSchedulingBodyDivider = (props: { headStyles?: CSSProperties }
+       }}>
+       <p
+         style={{
+-          borderTop: "solid 1px #E1E1E1",
++          borderTop: "solid 1px #E3ECF0",
+           fontSize: 1,
+           margin: "0px auto",
+           width: "100%",
+         }}
+       />
+       <RawHtml
+-        html={`<!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #E1E1E1;font-size:1px;margin:0px auto;width:548px;" role="presentation" width="548px" ><tr><td style="height:0;line-height:0;"> &nbsp;</td></tr></table><![endif]-->`}
++        html={`<!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #E3ECF0;font-size:1px;margin:0px auto;width:548px;" role="presentation" width="548px" ><tr><td style="height:0;line-height:0;"> &nbsp;</td></tr></table><![endif]-->`}
+       />
+     </td>
+   </EmailCommonDivider>
+diff --git a/packages/emails/src/components/EmailSchedulingBodyHeader.tsx b/packages/emails/src/components/EmailSchedulingBodyHeader.tsx
+index b74c9b2fed..9e24aa567e 100644
+--- a/packages/emails/src/components/EmailSchedulingBodyHeader.tsx
++++ b/packages/emails/src/components/EmailSchedulingBodyHeader.tsx
+@@ -9,19 +9,27 @@ export type BodyHeadType = "checkCircle" | "xCircle" | "calendarCircle" | "teamC
+ 
+ export const getHeadImage = (headerType: BodyHeadType): string => {
+   switch (headerType) {
++    // D4: icone ciano con nomi nuovi (Gmail tiene in cache le immagini per URL)
+     case "checkCircle":
+-      return `${BASE_URL}/emails/checkCircle@2x.png`;
++      return `${BASE_URL}/emails/d4-checkCircle@2x.png`;
+     case "xCircle":
+       return `${BASE_URL}/emails/xCircle@2x.png`;
+     case "calendarCircle":
+-      return `${BASE_URL}/emails/calendarCircle@2x.png`;
++      return `${BASE_URL}/emails/d4-calendarCircle@2x.png`;
+     case "teamCircle":
+-      return `${BASE_URL}/emails/teamCircle@2x.png`;
++      return `${BASE_URL}/emails/d4-teamCircle@2x.png`;
+   }
+ };
+ 
+-const EmailSchedulingBodyHeader = (props: { headerType: BodyHeadType; headStyles?: CSSProperties }) => {
+-  const image = getHeadImage(props.headerType);
++const EmailSchedulingBodyHeader = (props: {
++  headerType: BodyHeadType;
++  headStyles?: CSSProperties;
++  avatarUrl?: string;
++}) => {
++  // D4: la foto del titolare sostituisce l'icona, tranne nelle email di annullamento
++  const avatar = props.headerType !== "xCircle" ? props.avatarUrl : undefined;
++  const image = avatar || getHeadImage(props.headerType);
++  const size = avatar ? 88 : 64;
+ 
+   return (
+     <>
+@@ -35,20 +43,21 @@ const EmailSchedulingBodyHeader = (props: { headerType: BodyHeadType; headStyles
+             wordBreak: "break-word",
+           }}>
+           <Row border="0" role="presentation" style={{ borderCollapse: "collapse", borderSpacing: "0px" }}>
+-            <td style={{ width: 64 }}>
++            <td style={{ width: size }}>
+               <img
+-                height="64"
++                height={size}
+                 src={image}
+                 style={{
+-                  border: "0",
++                  border: avatar ? "3px solid #25E4E4" : "0",
++                  borderRadius: avatar ? "50%" : undefined,
+                   display: "block",
+                   outline: "none",
+                   textDecoration: "none",
+-                  height: "64px",
+-                  width: "100%",
++                  height: `${size}px`,
++                  width: `${size}px`,
+                   fontSize: "13px",
+                 }}
+-                width="64"
++                width={size}
+                 alt=""
+               />
+             </td>
+diff --git a/packages/emails/src/components/Info.tsx b/packages/emails/src/components/Info.tsx
+index d50eb87fe5..f992e9b2a6 100644
+--- a/packages/emails/src/components/Info.tsx
++++ b/packages/emails/src/components/Info.tsx
+@@ -1,6 +1,6 @@
+ import { markdownToSafeHTML } from "@calcom/lib/markdownToSafeHTML";
+ 
+-const Spacer = () => <p style={{ height: 6 }} />;
++const Spacer = () => <p style={{ height: 0, margin: 0 }} />;
+ 
+ export const Info = (props: {
+   label: string;
+@@ -36,14 +36,25 @@ export const Info = (props: {
+     <>
+       {props.withSpacer && <Spacer />}
+       <div>
+-        <p style={{ color: "#101010" }}>
++        {/* D4: etichetta in maiuscoletto teal (#086B6C = 6.3:1 su bianco) */}
++        <p
++          style={{
++            color: "#086B6C",
++            fontSize: 11,
++            fontWeight: 700,
++            letterSpacing: "1.4px",
++            lineHeight: "14px",
++            margin: "18px 0 0 0",
++            textTransform: "uppercase",
++          }}>
+           {props.isLabelHTML ? <StyledHtmlContent htmlContent={safeLabel} /> : props.label}
+         </p>
+         <p
+           style={{
+-            color: "#101010",
++            color: "#0B1A22",
+             fontWeight: 400,
+             lineHeight: "24px",
++            margin: "4px 0 0 0",
+             whiteSpace: "pre-wrap",
+             textDecoration: props.lineThrough ? "line-through" : undefined,
+           }}>
+diff --git a/packages/emails/src/components/LocationInfo.tsx b/packages/emails/src/components/LocationInfo.tsx
+index 999d523deb..a50d810e9e 100644
+--- a/packages/emails/src/components/LocationInfo.tsx
++++ b/packages/emails/src/components/LocationInfo.tsx
+@@ -35,7 +35,7 @@ export function LocationInfo(props: { calEvent: CalendarEvent; t: TFunction }) {
+             href={meetingUrl}
+             target="_blank"
+             title={t("meeting_url")}
+-            style={{ color: "#101010" }}
++            style={{ color: "#086B6C" }}
+             rel="noreferrer">
+             {providerName || "Link"}
+           </a>
+@@ -45,7 +45,7 @@ export function LocationInfo(props: { calEvent: CalendarEvent; t: TFunction }) {
+             <div style={{ color: "#494949", fontWeight: 400, lineHeight: "24px" }}>
+               <>
+                 {t("meeting_url")}:{" "}
+-                <a href={meetingUrl} title={t("meeting_url")} style={{ color: "#3E3E3E" }}>
++                <a href={meetingUrl} title={t("meeting_url")} style={{ color: "#086B6C" }}>
+                   {meetingUrl}
+                 </a>
+               </>
+@@ -62,7 +62,7 @@ export function LocationInfo(props: { calEvent: CalendarEvent; t: TFunction }) {
+         label={t("where")}
+         withSpacer
+         description={
+-          <a href={`tel:${location}`} title="Phone" style={{ color: "#3E3E3E" }}>
++          <a href={`tel:${location}`} title="Phone" style={{ color: "#086B6C" }}>
+             {location}
+           </a>
+         }
+diff --git a/packages/emails/src/components/ManageLink.tsx b/packages/emails/src/components/ManageLink.tsx
+index 44dd754e3b..3e85ddb2ce 100644
+--- a/packages/emails/src/components/ManageLink.tsx
++++ b/packages/emails/src/components/ManageLink.tsx
+@@ -66,7 +66,8 @@ export function ManageLink(props: { calEvent: CalendarEvent; attendee: Person })
+               <a
+                 href={rescheduleLink}
+                 style={{
+-                  color: "#374151",
++                  color: "#086B6C",
++                  fontWeight: 600,
+                   marginLeft: "5px",
+                   marginRight: "5px",
+                   textDecoration: "underline",
+@@ -81,7 +82,8 @@ export function ManageLink(props: { calEvent: CalendarEvent; attendee: Person })
+               <a
+                 href={cancelLink}
+                 style={{
+-                  color: "#374151",
++                  color: "#086B6C",
++                  fontWeight: 600,
+                   marginLeft: "5px",
+                   textDecoration: "underline",
+                 }}>
+@@ -103,7 +105,8 @@ export function ManageLink(props: { calEvent: CalendarEvent; attendee: Person })
+               <a
+                 href={bookingLink}
+                 style={{
+-                  color: "#374151",
++                  color: "#086B6C",
++                  fontWeight: 600,
+                   marginLeft: "5px",
+                   textDecoration: "underline",
+                 }}>
+diff --git a/packages/emails/src/components/WhoInfo.tsx b/packages/emails/src/components/WhoInfo.tsx
+index 52a5db7a5e..5a489533d0 100644
+--- a/packages/emails/src/components/WhoInfo.tsx
++++ b/packages/emails/src/components/WhoInfo.tsx
+@@ -10,11 +10,11 @@ export const PersonInfo = ({ name = "", email = "", role = "", phoneNumber = ""
+   const formattedPhoneNumber = !!phoneNumber ? `${phoneNumber} ` : "";
+ 
+   return (
+-    <div style={{ color: "#101010", fontWeight: 400, lineHeight: "24px" }}>
++    <div style={{ color: "#0B1A22", fontWeight: 400, lineHeight: "24px" }}>
+       {name} - {role} {formattedPhoneNumber}
+       {displayEmail && (
+         <span style={{ color: "#4B5563" }}>
+-          <a href={`mailto:${email}`} style={{ color: "#4B5563" }}>
++          <a href={`mailto:${email}`} style={{ color: "#086B6C" }}>
+             {email}
+           </a>
+         </span>
+diff --git a/turbo.json b/turbo.json
+index 41812087f4..5ce2bbea32 100644
+--- a/turbo.json
++++ b/turbo.json
+@@ -39,6 +39,7 @@
+     "CRON_SECRET",
+     "CRON_ENABLE_APP_SYNC",
+     "CLOUDFLARE_TURNSTILE_SECRET",
++    "D4_EMAIL_AVATAR_URL",
+     "D4_PUBLIC_ROOT_PATH",
+     "DAILY_API_KEY",
+     "DAILY_SCALE_PLAN",

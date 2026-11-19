@@ -1,6 +1,6 @@
 import { markdownToSafeHTML } from "@calcom/lib/markdownToSafeHTML";
 
-const Spacer = () => <p style={{ height: 6 }} />;
+const Spacer = () => <p style={{ height: 0, margin: 0 }} />;
 
 export const Info = (props: {
   label: string;
@@ -36,14 +36,25 @@ export const Info = (props: {
     <>
       {props.withSpacer && <Spacer />}
       <div>
-        <p style={{ color: "#101010" }}>
+        {/* D4: etichetta in maiuscoletto teal (#086B6C = 6.3:1 su bianco) */}
+        <p
+          style={{
+            color: "#086B6C",
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "1.4px",
+            lineHeight: "14px",
+            margin: "18px 0 0 0",
+            textTransform: "uppercase",
+          }}>
           {props.isLabelHTML ? <StyledHtmlContent htmlContent={safeLabel} /> : props.label}
         </p>
         <p
           style={{
-            color: "#101010",
+            color: "#0B1A22",
             fontWeight: 400,
             lineHeight: "24px",
+            margin: "4px 0 0 0",
             whiteSpace: "pre-wrap",
             textDecoration: props.lineThrough ? "line-through" : undefined,
           }}>
