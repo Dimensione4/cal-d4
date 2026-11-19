@@ -238,7 +238,8 @@ body[style*="transparent"]::before {
   text-wrap: balance;
   color: var(--cal-text-emphasis);
 }
-[data-testid="avatar"] {
+/* solo nella colonna dell'evento: data-testid="avatar" e' il componente generico, usato anche in admin */
+[data-testid="event-meta"] [data-testid="avatar"] {
   box-shadow: 0 0 0 2px var(--d4-tile-border), 0 0 20px hsl(180 78% 52% / 0.25);
 }
 [data-testid="selected-month-label"] strong,
@@ -356,10 +357,12 @@ body[style*="transparent"]::before {
 }
 
 /* ───────────── Profilo pubblico (/[username]): intestazione e lista eventi di vetro ─────────────
+   ATTENZIONE: div[data-testid="event-types"] e NON [data-testid="event-types"] nudo: nell'admin lo stesso testid
+   e' su un <ul> (lista eventi) e azzerare li' i token bg faceva sparire il pallino degli interruttori spenti.
    Qui non c'e' nessun elemento position:fixed dentro le card, quindi backdrop-filter e transform
    sulle card stesse sono sicuri (a differenza del Booker). */
 main div.rounded-xl:has([data-testid="name-title"]),
-[data-testid="event-types"],
+div[data-testid="event-types"],
 div[class~="border-booker"]:has([data-testid="check-icon"]) {
   --cal-bg: transparent;
   --cal-bg-muted: transparent;
@@ -373,7 +376,7 @@ div[class~="border-booker"]:has([data-testid="check-icon"]) {
   box-shadow: var(--d4-rim), var(--d4-drop);
   animation: d4-lift 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
-[data-testid="event-types"] {
+div[data-testid="event-types"] {
   animation-delay: 0.1s;
 }
 @keyframes d4-lift {
@@ -465,7 +468,7 @@ div[class~="border-booker"]:has([data-testid="check-icon"]) a.border-subtle.h-10
 @media (prefers-reduced-motion: reduce) {
   body::before,
   main div.rounded-xl:has([data-testid="name-title"]),
-  [data-testid="event-types"],
+  div[data-testid="event-types"],
   div[class~="border-booker"]:has([data-testid="check-icon"]),
   [data-testid="booker-container"],
   [data-testid="booker-container"]::before,
@@ -481,7 +484,7 @@ div[class~="border-booker"]:has([data-testid="check-icon"]) a.border-subtle.h-10
 }
 @media (prefers-reduced-transparency: reduce) {
   main div.rounded-xl:has([data-testid="name-title"]),
-  [data-testid="event-types"],
+  div[data-testid="event-types"],
   div[class~="border-booker"]:has([data-testid="check-icon"]) {
     background-color: var(--d4-solid);
     background-image: none;
