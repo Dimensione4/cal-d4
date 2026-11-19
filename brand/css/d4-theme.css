@@ -355,6 +355,96 @@ body[style*="transparent"]::before {
   transform: scale(0.98);
 }
 
+/* ───────────── Profilo pubblico (/[username]): intestazione e lista eventi di vetro ─────────────
+   Qui non c'e' nessun elemento position:fixed dentro le card, quindi backdrop-filter e transform
+   sulle card stesse sono sicuri (a differenza del Booker). */
+main div.rounded-xl:has([data-testid="name-title"]),
+[data-testid="event-types"],
+div[class~="border-booker"]:has([data-testid="check-icon"]) {
+  --cal-bg: transparent;
+  --cal-bg-muted: transparent;
+  background-color: var(--d4-glass);
+  background-image: var(--d4-sheen);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: var(--d4-rim), var(--d4-drop);
+  animation: d4-lift 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+[data-testid="event-types"] {
+  animation-delay: 0.1s;
+}
+@keyframes d4-lift {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+[data-testid="name-title"] {
+  font-family: var(--font-cal, var(--font-heading, serif));
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+}
+/* righe degli eventi: trasparenti sul vetro, con anello interno teal in hover (niente glow esterno,
+   il contenitore ha overflow:hidden) */
+[data-testid="event-type-link"] {
+  background-color: transparent;
+  border-color: var(--d4-tile-border);
+  transition: background-color 0.5s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-testid="event-type-link"]:hover {
+  background-color: var(--d4-tile);
+  box-shadow: inset 0 0 0 1px var(--d4-accent), inset 0 0 28px hsl(180 78% 52% / 0.1);
+}
+
+/* ───────────── Pagina di conferma (/booking/[uid]) ───────────── */
+div[class~="border-booker"]:has([data-testid="check-icon"]) {
+  border-radius: 1.5rem;
+}
+/* spunta: disco a gradiente con smusso e alone, come i pulsanti primari (testo scuro a contrasto) */
+div[class~="border-booker"]:has([data-testid="check-icon"]) .bg-cal-success {
+  background: var(--d4-grad);
+  box-shadow: var(--d4-bevel), 0 12px 36px -8px hsl(180 78% 52% / 0.55);
+}
+div[class~="border-booker"]:has([data-testid="check-icon"]) .bg-cal-success svg {
+  color: var(--d4-on-grad);
+}
+#modal-headline {
+  font-family: var(--font-cal, var(--font-heading, serif));
+  font-size: 1.75rem;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+/* badge "Host" (blu di Cal) nei colori del brand */
+div[class~="border-booker"]:has([data-testid="check-icon"]) .bg-cal-info {
+  background-color: var(--d4-tint);
+  color: var(--d4-eyebrow);
+  box-shadow: inset 0 0 0 1px var(--d4-tint-border);
+}
+/* link Riprogramma / Annulla */
+div[class~="border-booker"]:has([data-testid="check-icon"]) a.underline {
+  color: var(--d4-eyebrow);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+/* pulsanti "Aggiungi al calendario": pastiglie di vetro, hover con anello interno */
+div[class~="border-booker"]:has([data-testid="check-icon"]) a.border-subtle.h-10.w-10 {
+  border-radius: 0.75rem;
+  background: var(--d4-tile);
+  border-color: var(--d4-tile-border);
+  box-shadow: var(--d4-tile-shadow);
+  transition: box-shadow 0.5s cubic-bezier(0.32, 0.72, 0, 1), border-color 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+div[class~="border-booker"]:has([data-testid="check-icon"]) a.border-subtle.h-10.w-10:hover {
+  border-color: var(--d4-accent);
+  box-shadow: inset 0 0 0 1px var(--d4-accent), inset 0 0 20px hsl(180 78% 52% / 0.14);
+}
+
 /* ───────────── Mobile: niente vassoio, blur leggero, niente anello ───────────── */
 @media (max-width: 767px) {
   [data-testid="booker-container"] {
@@ -374,6 +464,9 @@ body[style*="transparent"]::before {
 /* ───────────── Accessibilita' ───────────── */
 @media (prefers-reduced-motion: reduce) {
   body::before,
+  main div.rounded-xl:has([data-testid="name-title"]),
+  [data-testid="event-types"],
+  div[class~="border-booker"]:has([data-testid="check-icon"]),
   [data-testid="booker-container"],
   [data-testid="booker-container"]::before,
   [data-testid="booker-container"]::after,
@@ -387,6 +480,14 @@ body[style*="transparent"]::before {
   }
 }
 @media (prefers-reduced-transparency: reduce) {
+  main div.rounded-xl:has([data-testid="name-title"]),
+  [data-testid="event-types"],
+  div[class~="border-booker"]:has([data-testid="check-icon"]) {
+    background-color: var(--d4-solid);
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
   [data-testid="booker-container"]::after {
     background-color: var(--d4-solid);
     background-image: none;
