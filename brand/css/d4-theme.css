@@ -504,3 +504,10 @@ div[class~="border-booker"]:has([data-testid="check-icon"]) a.border-subtle.h-10
     background-image: none;
   }
 }
+
+/* D4: pagina di conferma/annullamento, nascondi la promo upstream "Crea il tuo link... Provalo gratuitamente"
+   (porta a cal.com/signup con l'email del visitatore). Il blocco non ha testid: lo prendo dal link. */
+hr:has(+ div > a[href="https://cal.com/signup"]),
+div:has(> a[href="https://cal.com/signup"]) {
+  display: none !important;
+}
