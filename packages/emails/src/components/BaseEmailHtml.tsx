@@ -38,10 +38,10 @@ const D4Band = () => (
           <td align="center" style={{ padding: "28px 25px 24px 25px" }}>
             <img
               src={`${WEBAPP_URL}/emails/logo.png`}
-              width="176"
-              height="44"
+              width="208"
+              height="52"
               alt="Dimensione 4"
-              style={{ display: "block", width: 176, height: 44, border: 0 }}
+              style={{ display: "block", width: 208, height: 52, border: 0 }}
             />
           </td>
         </tr>

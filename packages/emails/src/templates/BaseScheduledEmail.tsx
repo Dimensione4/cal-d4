@@ -30,7 +30,7 @@ export const BaseScheduledEmail = (
 ) => {
   const { t, timeZone, locale, timeFormat: timeFormat_ } = props;
 
-  const timeFormat = timeFormat_ ?? TimeFormat.TWELVE_HOUR;
+  const timeFormat = timeFormat_ ?? TimeFormat.TWENTY_FOUR_HOUR; // D4: l'ospite italiano vede 11:00, non 11:00am
 
   function getRecipientStart(format: string) {
     return dayjs(props.calEvent.startTime).tz(timeZone).format(format);

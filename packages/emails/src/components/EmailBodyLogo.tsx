@@ -45,21 +45,21 @@ const EmailBodyLogo = () => {
                     wordBreak: "break-word",
                   }}>
                   <Row border="0" style={{ borderCollapse: "collapse", borderSpacing: "0px" }}>
-                    <td style={{ width: "128px" }}>
+                    <td style={{ width: "144px" }}>
                       <a href={WEBAPP_URL} target="_blank" rel="noreferrer">
                         <img
-                          height="32"
+                          height="36"
                           src={image}
                           style={{
                             border: "0",
                             display: "block",
                             outline: "none",
                             textDecoration: "none",
-                            height: "32px",
+                            height: "36px",
                             width: "100%",
                             fontSize: "13px",
                           }}
-                          width="128"
+                          width="144"
                           alt=""
                         />
                       </a>

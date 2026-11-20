@@ -1,5 +1,5 @@
 diff --git a/packages/emails/src/components/BaseEmailHtml.tsx b/packages/emails/src/components/BaseEmailHtml.tsx
-index 3297dd2231..5c174856e2 100644
+index 3297dd2231..9165d41477 100644
 --- a/packages/emails/src/components/BaseEmailHtml.tsx
 +++ b/packages/emails/src/components/BaseEmailHtml.tsx
 @@ -1,4 +1,6 @@
@@ -33,10 +33,10 @@ index 3297dd2231..5c174856e2 100644
 +          <td align="center" style={{ padding: "28px 25px 24px 25px" }}>
 +            <img
 +              src={`${WEBAPP_URL}/emails/logo.png`}
-+              width="176"
-+              height="44"
++              width="208"
++              height="52"
 +              alt="Dimensione 4"
-+              style={{ display: "block", width: 176, height: 44, border: 0 }}
++              style={{ display: "block", width: 208, height: 52, border: 0 }}
 +            />
 +          </td>
 +        </tr>
@@ -102,7 +102,7 @@ index 3297dd2231..5c174856e2 100644
              {props.title && (
                <EmailScheduledBodyHeaderContent
 diff --git a/packages/emails/src/components/EmailBodyLogo.tsx b/packages/emails/src/components/EmailBodyLogo.tsx
-index 2292b62948..908e7c268d 100644
+index 2292b62948..49f257d7f1 100644
 --- a/packages/emails/src/components/EmailBodyLogo.tsx
 +++ b/packages/emails/src/components/EmailBodyLogo.tsx
 @@ -45,21 +45,21 @@ const EmailBodyLogo = () => {
@@ -110,11 +110,11 @@ index 2292b62948..908e7c268d 100644
                    }}>
                    <Row border="0" style={{ borderCollapse: "collapse", borderSpacing: "0px" }}>
 -                    <td style={{ width: "89px" }}>
-+                    <td style={{ width: "128px" }}>
++                    <td style={{ width: "144px" }}>
                        <a href={WEBAPP_URL} target="_blank" rel="noreferrer">
                          <img
 -                          height="19"
-+                          height="32"
++                          height="36"
                            src={image}
                            style={{
                              border: "0",
@@ -122,12 +122,12 @@ index 2292b62948..908e7c268d 100644
                              outline: "none",
                              textDecoration: "none",
 -                            height: "19px",
-+                            height: "32px",
++                            height: "36px",
                              width: "100%",
                              fontSize: "13px",
                            }}
 -                          width="89"
-+                          width="128"
++                          width="144"
                            alt=""
                          />
                        </a>
@@ -376,6 +376,19 @@ index 52a5db7a5e..5a489533d0 100644
              {email}
            </a>
          </span>
+diff --git a/packages/emails/src/templates/BaseScheduledEmail.tsx b/packages/emails/src/templates/BaseScheduledEmail.tsx
+index 436e69dc4d..1630c99c79 100644
+--- a/packages/emails/src/templates/BaseScheduledEmail.tsx
++++ b/packages/emails/src/templates/BaseScheduledEmail.tsx
+@@ -30,7 +30,7 @@ export const BaseScheduledEmail = (
+ ) => {
+   const { t, timeZone, locale, timeFormat: timeFormat_ } = props;
+ 
+-  const timeFormat = timeFormat_ ?? TimeFormat.TWELVE_HOUR;
++  const timeFormat = timeFormat_ ?? TimeFormat.TWENTY_FOUR_HOUR; // D4: l'ospite italiano vede 11:00, non 11:00am
+ 
+   function getRecipientStart(format: string) {
+     return dayjs(props.calEvent.startTime).tz(timeZone).format(format);
 diff --git a/turbo.json b/turbo.json
 index 41812087f4..5ce2bbea32 100644
 --- a/turbo.json
