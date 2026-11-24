@@ -1,0 +1,14 @@
+{
+  "name": "d4-avvisi",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "start": "node src/main.ts"
+  },
+  "dependencies": {
+    "nodemailer": "6.9.16",
+    "pg": "8.13.1"
+  }
+}
