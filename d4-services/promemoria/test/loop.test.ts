@@ -130,3 +130,16 @@ test("call annullata: i suoi invii in attesa diventano subito saltati", async ()
   assert.deepEqual([t.store.listSends(5)[0].status, t.store.listSends(5)[0].reason], ["skipped", "annullata"]);
   assert.equal(t.sent.length, 0);
 });
+
+test("regola salvata durante un giro: nessuna email doppia", async () => {
+  const t = setup();
+  const get = t.deps.cal.get;
+  let once = true;
+  t.deps.cal.get = async (uid: string) => {
+    if (once) { once = false; t.store.deletePendingForRule(1); } // Dario salva la regola mentre il giro aspetta Cal
+    return get(uid);
+  };
+  await runCycle(t.deps);
+  await runCycle(t.deps);
+  assert.equal(t.sent.length, 1);
+});

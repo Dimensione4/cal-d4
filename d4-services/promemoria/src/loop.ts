@@ -29,7 +29,7 @@ export async function runCycle({ store, cal, mailer, cfg, now: clock, log }: Dep
     if (d.action === "skip") { store.updateSend(s.id, { status: "skipped", reason: d.reason }); continue; }
     const rule = store.getRule(s.ruleId);
     if (!rule) { store.updateSend(s.id, { status: "skipped", reason: "regola eliminata" }); continue; }
-    store.updateSend(s.id, { status: "sending" }); // prima dell'invio: dopo un crash non si rimanda
+    if (!store.claimSend(s.id)) continue; // prima dell'invio: dopo un crash non si rimanda; regola salvata nel frattempo = niente
     try {
       await mailer.send(s.toAddr, renderEmail(rule, b!, cfg.calWebappUrl, cfg.tzDefault));
       store.updateSend(s.id, { status: "sent", attempts: s.attempts + 1, reason: "" });

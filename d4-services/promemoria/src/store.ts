@@ -94,7 +94,10 @@ export function openStore(path: string) {
       db.prepare(`UPDATE sends SET ${keys.map((k) => `${SEND_COLS[k]} = ?`).join(", ")}, updated_at = ? WHERE id = ?`)
         .run(...keys.map((k) => (patch as any)[k]), now(), id);
     },
-    sendsWithStatus: (status: SendStatus) => db.prepare("SELECT * FROM sends WHERE status = ?").all(status).map(toSend),
+    // true solo se l'invio era ancora in attesa: così un invio cancellato o già preso non parte
+    claimSend: (id: number) =>
+      Number(db.prepare("UPDATE sends SET status = 'sending', updated_at = ? WHERE id = ? AND status = 'pending'").run(now(), id).changes) === 1,
+    sendsWithStatus:(status: SendStatus) => db.prepare("SELECT * FROM sends WHERE status = ?").all(status).map(toSend),
     dueSends: (nowIso: string) =>
       db.prepare("SELECT * FROM sends WHERE status = 'pending' AND due_at <= ? ORDER BY due_at").all(nowIso).map(toSend),
     getMeta(k: string): string | undefined {
