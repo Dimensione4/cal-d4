@@ -1,0 +1,41 @@
+# D4 · Costruisce l'immagine del servizio D4 Avvisi (promemoria) e la pubblica su GHCR.
+name: D4 Build Avvisi
+
+on:
+  push:
+    branches: [d4/main, d4/promemoria]
+    paths: ["d4-services/promemoria/**", ".github/workflows/d4-build-avvisi.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: d4-build-avvisi-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: d4-services/promemoria
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Test
+        run: npm install --no-audit --no-fund && npm test
+      - name: Login GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Build e push
+        run: |
+          IMAGE=ghcr.io/dimensione4/cal-d4-avvisi
+          TAG="$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
+          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+          docker push "$IMAGE:$TAG"
+          docker push "$IMAGE:latest"
+          echo "Immagine: $IMAGE:$TAG"
+          echo "\`$IMAGE:$TAG\` (anche \`latest\`)" >> "$GITHUB_STEP_SUMMARY"

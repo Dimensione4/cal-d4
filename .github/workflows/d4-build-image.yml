@@ -5,7 +5,7 @@ name: D4 Build Image
 on:
   push:
     branches: [d4/main]
-    paths-ignore: ["**.md"]
+    paths-ignore: ["**.md", "d4-services/**", ".github/workflows/d4-build-avvisi.yml"]
   workflow_dispatch:
 
 permissions:
