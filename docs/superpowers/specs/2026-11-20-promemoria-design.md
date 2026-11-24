@@ -6,6 +6,13 @@ Data: 2026-11-20 · Ramo: `d4/promemoria` · Cartella codice: `d4-services/prome
 
 Dario sostituisce TidyCal con Cal D4 (`cal.dimensione4.it`). TidyCal mandava **promemoria via email** all'ospite; il fork di Cal ha rimosso i Workflows, quindi oggi non parte nessun promemoria. Dario vuole anche **conferma e promemoria su WhatsApp** dal suo WhatsApp Business, con testi e tempi decisi da lui da una pagina. Questa è l'ultima cosa che manca per mettere Cal sul sito al posto di TidyCal. Requisito chiave detto da Dario: **"è importante che funzioni"**, poi la velocità.
 
+## Approvazione e fasi (2026-11-24)
+
+Approvato da Dario il 2026-11-24, con indirizzo **`avvisi.cal.dimensione4.it`** (record DNS `A avvisi.cal → 217.160.128.23` su Netsons, lo crea Dario).
+
+- **Fase 1 (subito):** servizio completo con il solo canale **email** (regole, pagina, storico, allarme, test). Basta per sostituire TidyCal e mettere Cal sul sito.
+- **Fase 2 (quando Meta si sblocca):** canale **WhatsApp** (template, approvazione, webhook stati, numero non WhatsApp, consenso nel modulo di Cal). Il codice della fase 1 prevede già il canale come campo della regola, così la fase 2 aggiunge senza rifare.
+
 ## Obiettivi
 
 1. Per ogni prenotazione accettata su Cal, mandare all'ospite i messaggi previsti dalle **regole**:
@@ -77,7 +84,7 @@ Il servizio manda WhatsApp **solo** se c'è il numero **e** la casella è spunta
 
 ### Pagina di gestione
 
-- Dominio `promemoria.dimensione4.it` (Coolify/Traefik, HTTPS), accesso con password (env `ADMIN_PASSWORD`, cookie di sessione firmato). Mobile first, stile D4 (scuro, ciano).
+- Dominio `avvisi.cal.dimensione4.it` (Coolify/Traefik, HTTPS), accesso con password (env `ADMIN_PASSWORD`, cookie di sessione firmato). Mobile first, stile D4 (scuro, ciano).
 - Sezioni: **Regole** (lista, crea/modifica/attiva), **Testi WhatsApp** (stato approvazione), **Storico** (ultimi invii, filtro per prenotazione), **Prova** (manda un messaggio di prova a un numero/email dati, per controllare il testo).
 
 ### Configurazione (env su Coolify, nessuna nel repo)
@@ -111,4 +118,4 @@ Struttura dei file, schema SQLite preciso, aspetto delle pagine dentro lo stile 
 
 1. Scegliere e collegare il numero vero all'account "Dimensione 4" (se il numero è già usato nell'app WhatsApp Business, valutare la coesistenza).
 2. Creare l'utente di sistema e il token permanente per il servizio.
-3. Impostare l'URL del webhook (`https://promemoria.dimensione4.it/meta/webhook`) e il verify token nell'app Meta.
+3. Impostare l'URL del webhook (`https://avvisi.cal.dimensione4.it/meta/webhook`) e il verify token nell'app Meta.
