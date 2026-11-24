@@ -119,3 +119,14 @@ test("invii rimasti a metà all'avvio diventano failed 'interrotto'", async () =
   recoverInterrupted(t.store);
   assert.deepEqual([t.store.listSends(5)[0].status, t.store.listSends(5)[0].reason], ["failed", "interrotto"]);
 });
+
+test("call annullata: i suoi invii in attesa diventano subito saltati", async () => {
+  const t = setup();
+  t.setNow("2026-11-26T09:00:00Z");
+  await runCycle(t.deps);
+  t.bookings.set("b1", booking({ status: "cancelled" }));
+  t.setNow("2026-11-26T09:01:00Z");
+  await runCycle(t.deps);
+  assert.deepEqual([t.store.listSends(5)[0].status, t.store.listSends(5)[0].reason], ["skipped", "annullata"]);
+  assert.equal(t.sent.length, 0);
+});

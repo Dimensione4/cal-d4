@@ -13,7 +13,13 @@ const short = (e: unknown) => String((e as any)?.message ?? e).slice(0, 200);
 
 export async function runCycle({ store, cal, mailer, cfg, now: clock, log }: Deps): Promise<void> {
   const now = clock();
-  const { inserts, reschedules } = planSends(await cal.listWindow(now), store.listRules(), store.sendsByKey(), now);
+  const bookings = await cal.listWindow(now);
+  const existing = store.sendsByKey();
+  const { inserts, reschedules } = planSends(bookings, store.listRules(), existing, now);
+  const gone = new Set(bookings.filter((b) => b.status !== "accepted").map((b) => b.uid));
+  for (const s of existing.values()) {
+    if (s.status === "pending" && gone.has(s.bookingUid)) store.updateSend(s.id, { status: "skipped", reason: "annullata" });
+  }
   for (const s of inserts) store.insertSend(s);
   for (const r of reschedules) store.updateSend(r.id, { dueAt: r.dueAt, bookingStart: r.bookingStart });
 
